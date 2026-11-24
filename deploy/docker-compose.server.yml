@@ -9,6 +9,7 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql
+    mem_limit: 256m
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d url_db"]
       interval: 5s
@@ -22,10 +23,18 @@ services:
      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/url_db
      POSTGRES_USER: ${POSTGRES_USER}
      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+     JAVA_TOOL_OPTIONS: -Xmx256m
     restart: unless-stopped
+    mem_limit: 512m
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/actuator/health/readiness || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
 
 volumes:
   postgres_data:
