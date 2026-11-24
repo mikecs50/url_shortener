@@ -5,6 +5,8 @@ spring:
     url: jdbc:postgresql://localhost:5433/url_db
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+    hikari:
+      connection-timeout: 3000
   jpa:
     hibernate:
       ddl-auto: validate
@@ -22,6 +24,9 @@ management:
       show-details: never
       probes:
         enabled: true
+      group:
+        readiness:
+          include: readinessState,db
   endpoints:
     web:
       exposure:
